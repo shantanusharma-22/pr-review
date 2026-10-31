@@ -1,0 +1,5 @@
+Most AI code reviews are polite fluff that miss critical bugs.
+
+pr-review brings cold, hard proof to GitHub Copilot, Antigravity, and Claude Code. Stop rubber-stamping PRs:
+https://github.com/shantanusharma-22/pr-review
+

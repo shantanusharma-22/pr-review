@@ -13,6 +13,18 @@ An evidence-first, multi-agent code review skill that transforms AI assistants i
 
 [Quickstart](#-quickstart) • [The Review Pipeline](#-the-6-phase-review-pipeline) • [Proof Ladder](#-the-proof-ladder) • [Defect Anatomy](#-anatomy-of-a-defect) • [Contributing](CONTRIBUTING.md)
 
+<br/>
+
+<a href="assets/pr-review-launch.mp4">
+  <img src="assets/preview.gif" alt="pr-review Cinematic Launch Reel" width="100%" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.5);" />
+</a>
+
+<p align="center">
+  <a href="assets/pr-review-launch.mp4">
+    🎬 <b>Click to Watch the 20-Second Explainer Video (1080p HD with Audio)</b>
+  </a>
+</p>
+
 ---
 
 </div>
