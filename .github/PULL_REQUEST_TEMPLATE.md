@@ -25,3 +25,4 @@ Remember: PR descriptions are claims; the diff and execution output are proof!
 - [ ] Every modified or deleted line maintains provenance (historical intent acknowledged).
 - [ ] No subjective or aesthetic opinions added to rubrics without objective defect triggers.
 - [ ] Ground rules from `CONTRIBUTING.md` adhered to.
+

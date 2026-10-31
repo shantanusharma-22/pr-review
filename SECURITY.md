@@ -18,3 +18,4 @@ Security is a fundamental pillar of evidence-first code reviews. If you discover
 4. We will coordinate a fix and release an advisory once the resolution is verified.
 
 Thank you for helping keep our tools and workflows safe for everyone!
+
