@@ -1,0 +1,80 @@
+# Proposal-only CI lane. Runs the deterministic parts (fetch, validate, render) and uploads
+# the PREVIEW as an artifact. It never posts a review: a human downloads the preview, then
+# runs `python scripts/post_review.py ... --yes` locally, or triggers the `post` job manually.
+#
+# The `review` step that produces decision.json is left as a placeholder: wire it to your
+# model runner (Claude Code CLI in headless mode, or an API call with prompts/review-pr.md)
+# and give that step READ-ONLY credentials. Write credentials exist only in the `post` job,
+# which requires the `pr-review-approvers` environment with required reviewers.
+
+name: pr-review-agent
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: "PR number to review"
+        required: true
+      post:
+        description: "Set to 'yes' to post after a human approved the preview artifact"
+        default: "no"
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: pr-review-${{ github.event.pull_request.number || inputs.pr }}
+  cancel-in-progress: true
+
+jobs:
+  propose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4   # pin to a SHA in your fork
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install jsonschema
+      - name: Fetch PR data (read-only)
+        env: { GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+        run: |
+          DIR=$(python scripts/fetch_pr.py "${{ github.repository }}#${{ github.event.pull_request.number || inputs.pr }}")
+          echo "REVIEW_DIR=$DIR" >> "$GITHUB_ENV"
+      - name: Review (model step - replace with your runner)
+        run: |
+          echo "::notice::Wire your model runner here. It must read $REVIEW_DIR and prompts/review-pr.md and write $REVIEW_DIR/decision.json"
+          test -f "$REVIEW_DIR/decision.json" || { echo "no decision.json produced; skipping render"; exit 0; }
+      - name: Validate and render
+        if: hashFiles('.pr-review/**/decision.json') != ''
+        run: |
+          python scripts/validate_findings.py "$REVIEW_DIR/decision.json" --files "$REVIEW_DIR/files.json"
+          python scripts/render_review.py "$REVIEW_DIR/decision.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pr-review-preview
+          path: .pr-review/
+          retention-days: 14
+
+  post:
+    # Manual, gated. Requires an environment with required reviewers so a human clicks approve.
+    if: github.event_name == 'workflow_dispatch' && inputs.post == 'yes'
+    needs: propose
+    runs-on: ubuntu-latest
+    environment: pr-review-approvers
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install jsonschema
+      - uses: actions/download-artifact@v4
+        with: { name: pr-review-preview, path: .pr-review/ }
+      - name: Post (drift-checked, idempotent)
+        env: { GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+        run: |
+          D=$(find .pr-review -name decision.json | head -1)
+          python scripts/post_review.py "$D" --yes
