@@ -49,6 +49,15 @@ Most AI code review bots flood pull requests with polite flattery, hallucinated 
 
 The agent executes a systematic, top-to-bottom inspection. Syntax is never debated before product fit and architectural safety are verified.
 
+<div align="center">
+  <a href="assets/pipeline-short.mp4">
+    <img src="assets/pipeline-short-preview.gif" alt="6-Phase Review Pipeline Short" width="360" style="border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);" />
+  </a>
+  <p>
+    📱 <b><a href="assets/pipeline-short.mp4">Watch the 22-second Pipeline Short (Vertical 1080×1920 with Audio)</a></b>
+  </p>
+</div>
+
 ```mermaid
 flowchart TD
     PR([📥 Incoming Pull Request Diff]) --> P1[Phase 1: Product Fit<br/>What changes for end users? Are breaking changes smuggled in?]
