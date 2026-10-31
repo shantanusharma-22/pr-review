@@ -1,4 +1,17 @@
-.pr-review/
+# OS generated files
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+.DS_Store
+
+# Temporary & cache files
+*.pyc
 __pycache__/
 .pytest_cache/
-*.pyc
+.pr-review/
+*.log
+.env
+.env.local
