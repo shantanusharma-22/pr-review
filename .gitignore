@@ -16,4 +16,5 @@ __pycache__/
 .env
 .env.local
 
-brag-output/
+brag-output/work/
+brag-output/*.mp4
