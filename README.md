@@ -320,27 +320,9 @@ host never rejects the review because of a bad anchor.
 The agent shows you the review and asks before posting. Without an explicit yes, the post command only
 prints exactly what it would send.
 
-```mermaid
-sequenceDiagram
-    actor You
-    participant Agent as AI agent
-    participant CLI as prr.py
-    participant Host as Git host
-    You->>Agent: review PR 42
-    Agent->>CLI: collect
-    CLI->>Host: read PR, diff, comments, issues
-    Host-->>CLI: data
-    CLI-->>Agent: digest with line-numbered patches
-    Agent->>Agent: review three axes, write findings.json
-    Agent->>CLI: validate and render
-    CLI-->>Agent: checked review
-    Agent-->>You: review and "Post as request changes?"
-    Agent->>CLI: post (dry run)
-    CLI-->>Agent: exactly what would be posted
-    You->>Agent: yes
-    Agent->>CLI: post --confirm
-    CLI->>Host: one batched review
-```
+<p align="center">
+  <img src="docs/assets/approval-flow.svg" alt="Sequence: you ask for a review; the agent runs prr.py collect, which reads the PR from the git host; the agent reviews three axes, validates, and shows you a dry run; only after you say yes does prr.py post one batched review to the host" width="100%">
+</p>
 
 ### Step 6: Post
 

@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 790" width="1000" height="790" role="img" aria-labelledby="t d">
+  <title id="t">How a review flows from request to posting</title>
+  <desc id="d">Sequence between you, the AI agent, the prr.py script and the git host. The agent collects the PR, reviews it, validates the findings and shows you a dry run. Only after you say yes does the script post one batched review to the host.</desc>
+  <style>
+    .bg{fill:#F3F5F9}.ink{fill:#1B2533}.mut{fill:#5F6E80}.box{fill:#FFFFFF;stroke:#C9D2DE}
+    .life{stroke:#B7C2D0}.ln{stroke:#3E4B5C}.acc{fill:#3A48B8}.accl{stroke:#4B5BD7}
+    .band{fill:#E4E7FB}.note{fill:#ECEAFD;stroke:#9C93E6}.notet{fill:#3C3489}
+    .mk{fill:#3E4B5C}.mka{fill:#4B5BD7}
+    .sans{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
+    @media (prefers-color-scheme: dark){
+      .bg{fill:#121C28}.ink{fill:#E7ECF2}.mut{fill:#93A2B4}.box{fill:#182533;stroke:#2F4054}
+      .life{stroke:#34465A}.ln{stroke:#AEBBCB}.acc{fill:#AAB4FF}.accl{stroke:#8E9BFF}
+      .band{fill:#1D2645}.note{fill:#24224A;stroke:#6F68C9}.notet{fill:#CECBF6}
+      .mk{fill:#AEBBCB}.mka{fill:#8E9BFF}
+    }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="mk" d="M0 0L10 5L0 10z"/></marker>
+    <marker id="b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="mka" d="M0 0L10 5L0 10z"/></marker>
+  </defs>
+  <rect class="bg" width="1000" height="790" rx="14"/>
+
+  <rect class="band" x="16" y="604" width="968" height="146" rx="10"/>
+  <text class="acc sans" x="968" y="626" font-size="14" font-weight="600" text-anchor="end">Writes start only after your yes</text>
+
+  <g class="life" stroke-width="1.5" stroke-dasharray="4 5">
+    <line x1="120" y1="74" x2="120" y2="764"/><line x1="380" y1="74" x2="380" y2="764"/>
+    <line x1="640" y1="74" x2="640" y2="764"/><line x1="880" y1="74" x2="880" y2="764"/>
+  </g>
+  <g stroke-width="1.2">
+    <rect class="box" x="50" y="28" width="140" height="46" rx="8"/>
+    <rect class="box" x="310" y="28" width="140" height="46" rx="8"/>
+    <rect class="box" x="570" y="28" width="140" height="46" rx="8"/>
+    <rect class="box" x="810" y="28" width="140" height="46" rx="8"/>
+  </g>
+  <g class="ink sans" font-size="16" font-weight="600" text-anchor="middle">
+    <text x="120" y="56">You</text><text x="380" y="56">AI agent</text>
+    <text x="640" y="56" class="ink mono" font-weight="500">prr.py</text><text x="880" y="56">Git host</text>
+  </g>
+
+  <g class="ln" stroke-width="1.6" fill="none">
+    <line x1="122" y1="124" x2="376" y2="124" marker-end="url(#a)"/>
+    <line x1="382" y1="168" x2="636" y2="168" marker-end="url(#a)"/>
+    <line x1="642" y1="212" x2="876" y2="212" marker-end="url(#a)"/>
+    <line x1="878" y1="256" x2="644" y2="256" marker-end="url(#a)" stroke-dasharray="6 5"/>
+    <line x1="638" y1="300" x2="384" y2="300" marker-end="url(#a)" stroke-dasharray="6 5"/>
+    <line x1="382" y1="400" x2="636" y2="400" marker-end="url(#a)"/>
+    <line x1="638" y1="444" x2="384" y2="444" marker-end="url(#a)" stroke-dasharray="6 5"/>
+    <line x1="378" y1="488" x2="124" y2="488" marker-end="url(#a)" stroke-dasharray="6 5"/>
+    <line x1="382" y1="532" x2="636" y2="532" marker-end="url(#a)"/>
+    <line x1="638" y1="576" x2="384" y2="576" marker-end="url(#a)" stroke-dasharray="6 5"/>
+  </g>
+  <g class="accl" stroke-width="2.4" fill="none">
+    <line x1="122" y1="660" x2="376" y2="660" marker-end="url(#b)"/>
+    <line x1="382" y1="700" x2="636" y2="700" marker-end="url(#b)"/>
+    <line x1="642" y1="740" x2="876" y2="740" marker-end="url(#b)"/>
+  </g>
+
+  <rect class="note" x="290" y="318" width="180" height="48" rx="8" stroke-width="1.2"/>
+  <text class="notet sans" font-size="14" text-anchor="middle"><tspan x="380" y="338">Reviews three axes,</tspan><tspan x="380" y="356">writes findings.json</tspan></text>
+
+  <g class="ink sans" font-size="14" text-anchor="middle">
+    <text x="250" y="114">review PR 42</text>
+    <text x="510" y="158" class="ink mono">collect</text>
+    <text x="760" y="202">read PR, diff, comments, issues</text>
+    <text x="760" y="246" class="mut sans">data</text>
+    <text x="510" y="290" class="mut sans">digest with line-numbered patches</text>
+    <text x="510" y="390">validate and render</text>
+    <text x="510" y="434" class="mut sans">checked review</text>
+    <text x="250" y="478" class="mut sans">shows review, asks to post</text>
+    <text x="510" y="522" class="ink mono">post (dry run)</text>
+    <text x="510" y="566" class="mut sans">exactly what would be posted</text>
+  </g>
+  <g class="acc sans" font-size="14" font-weight="600" text-anchor="middle">
+    <text x="250" y="650">yes</text>
+    <text x="510" y="690" class="acc mono">post --confirm</text>
+    <text x="760" y="730">one batched review</text>
+  </g>
+</svg>
