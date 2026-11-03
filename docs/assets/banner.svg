@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 440" width="1280" height="440" role="img" aria-labelledby="t d">
+  <title id="t">pr-review</title>
+  <desc id="d">A code diff where the line "on one git host, with one AI tool" is replaced by "on any git host, with any AI agent", with a review comment anchored to line 42.</desc>
+  <style>
+    .bg{fill:#F3F5F9}.ink{fill:#1B2533}.mut{fill:#5F6E80}.panel{fill:#FFFFFF;stroke:#D5DCE6}
+    .hunk{fill:#EAEFF6}.add{fill:#DDF3E4}.addt{fill:#16683A}.del{fill:#FBE5E5}.delt{fill:#A82E2E}
+    .bub{fill:#FFFFFF;stroke:#4B5BD7}.acc{fill:#3A48B8}.accs{stroke:#4B5BD7}.dot{fill:#4B5BD7}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
+    .sans{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+    @media (prefers-color-scheme: dark){
+      .bg{fill:#121C28}.ink{fill:#E7ECF2}.mut{fill:#93A2B4}.panel{fill:#182533;stroke:#2B3B4D}
+      .hunk{fill:#1E2D3D}.add{fill:#173826}.addt{fill:#7EDDA4}.del{fill:#3B1E23}.delt{fill:#F29A9A}
+      .bub{fill:#182533;stroke:#8E9BFF}.acc{fill:#AAB4FF}.accs{stroke:#8E9BFF}.dot{fill:#8E9BFF}
+    }
+  </style>
+  <rect class="bg" width="1280" height="440" rx="18"/>
+
+  <text class="ink sans" x="64" y="98" font-size="58" font-weight="700" letter-spacing="-1">pr-review</text>
+  <text class="mut sans" x="66" y="136" font-size="22">Pull request review skill for AI coding agents</text>
+
+  <rect class="panel" x="64" y="168" width="720" height="186" rx="10" stroke-width="1.5"/>
+  <path class="hunk" d="M65 178a9 9 0 0 1 9-9h700a9 9 0 0 1 9 9v25H65z"/>
+  <text class="mut mono" x="88" y="193" font-size="17">@@ -41,3 +41,3 @@ README.md</text>
+
+  <g class="mono" font-size="20">
+    <text class="mut" x="112" y="234" text-anchor="end">41</text>
+    <text class="ink" x="160" y="234">reviewing a pull request</text>
+
+    <rect class="del" x="65" y="246" width="718" height="32"/>
+    <text class="delt" x="132" y="268">-</text>
+    <text class="delt" x="160" y="268">on one git host, with one AI tool</text>
+
+    <rect class="add" x="65" y="280" width="718" height="32"/>
+    <text class="addt" x="112" y="302" text-anchor="end">42</text>
+    <text class="addt" x="132" y="302">+</text>
+    <text class="addt" x="160" y="302">on any git host, with any AI agent</text>
+
+    <text class="mut" x="112" y="338" text-anchor="end">43</text>
+    <text class="ink" x="160" y="338">with evidence for every finding</text>
+  </g>
+
+  <line class="accs" x1="784" y1="296" x2="818" y2="296" stroke-width="2"/>
+  <circle class="dot" cx="784" cy="296" r="4"/>
+  <rect class="bub" x="820" y="226" width="396" height="140" rx="10" stroke-width="2"/>
+  <text class="acc sans" x="844" y="258" font-size="15" font-weight="600">Review comment on line 42</text>
+  <g class="ink sans" font-size="18">
+    <text x="844" y="290">Correctness, standards and spec,</text>
+    <text x="844" y="316">reviewed separately. Nothing is</text>
+    <text x="844" y="342">posted until you approve.</text>
+  </g>
+
+  <text class="mut sans" x="66" y="404" font-size="18">GitHub, GitLab, Bitbucket, Azure DevOps, Gitea and Forgejo, or any local git repository</text>
+</svg>
