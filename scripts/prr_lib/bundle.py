@@ -162,7 +162,7 @@ def render_digest(bundle: dict, ws: str, max_files: int, max_lines: int) -> str:
     add("\n### SPEC SOURCES")
     if b.get("linked_issues"):
         for i in b["linked_issues"]:
-            add(f"- issue {i['id']}: {neutralize(str(i['title']))[:120]} →{ws}/spec/issue-{_safe(i['id'])}.md")
+            add(f"- issue {i['id']}: {neutralize(str(i['title']))[:120]} → {ws}/spec/issue-{_safe(i['id'])}.md")
     else:
         add("- none linked")
     if b.get("external_refs"):
