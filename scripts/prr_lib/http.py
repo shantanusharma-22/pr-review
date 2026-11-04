@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 import time
 import urllib.error
 import urllib.parse
@@ -41,9 +42,8 @@ class _SafeRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         new = super().redirect_request(req, fp, code, msg, headers, newurl)
         if new is not None:
-            old_host = urllib.parse.urlparse(req.full_url).netloc
-            new_host = urllib.parse.urlparse(newurl).netloc
-            if old_host != new_host:
+            old, nw = urllib.parse.urlparse(req.full_url), urllib.parse.urlparse(newurl)
+            if old.netloc != nw.netloc or (old.scheme == "https" and nw.scheme != "https"):
                 for h in ("Authorization", "Private-token", "Job-token"):
                     new.headers.pop(h, None)
                     new.unredirected_hdrs.pop(h, None)
@@ -65,11 +65,23 @@ def urllib_transport(method, url, headers, data, timeout) -> Response:
         raise HttpError(0, url, f"network error: {e.reason}") from e
 
 
+SENSITIVE_HEADERS = ("authorization", "private-token", "job-token")
+_LOOPBACK = {"localhost", "127.0.0.1", "::1"}
+
+
+def _strip_credentials_over_http(base_url: str, headers: Dict[str, str]) -> Dict[str, str]:
+    """Never send credentials in clear text (unless loopback or PR_REVIEW_ALLOW_HTTP=1)."""
+    u = urllib.parse.urlparse(base_url)
+    if u.scheme == "https" or (u.hostname or "") in _LOOPBACK or os.environ.get("PR_REVIEW_ALLOW_HTTP") == "1":
+        return headers
+    return {k: v for k, v in headers.items() if k.lower() not in SENSITIVE_HEADERS}
+
+
 class Client:
     def __init__(self, base_url: str, headers: Optional[Dict[str, str]] = None,
                  timeout: float = 30.0, retries: int = 3, transport: Optional[Transport] = None):
         self.base_url = base_url.rstrip("/")
-        self.headers = dict(headers or {})
+        self.headers = _strip_credentials_over_http(base_url, dict(headers or {}))
         self.headers.setdefault("User-Agent", "pr-review-skill")
         self.timeout = timeout
         self.retries = retries
