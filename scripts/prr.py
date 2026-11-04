@@ -37,7 +37,8 @@ def _error_block(provider: str, cmd: str, detail: str) -> None:
         "### Error\n\n"
         f"Cannot review: the {provider} preflight failed.\n\n"
         f"- Failing step: `{cmd}`\n- Error: {detail}\n"
-        f"- Required action: {auth.HINTS.get(provider, 'check the URL, network access and credentials.')}\n")
+        f"- Required action: {auth.HINTS.get(provider, 'check the URL, network access and credentials.')}"
+        f"{auth.TRUST_HINT if provider in ('github', 'gitlab', 'gitea') else ''}\n")
 
 
 def _provider_from_bundle(b: dict, args=None):
@@ -129,8 +130,11 @@ def cmd_snippet(a) -> int:
     for spec in a.specs:
         m = re.fullmatch(r"(.+?)(?::(\d+)-(\d+))?", spec)
         path, lo, hi = m.group(1), m.group(2), m.group(3)
-        cpath = os.path.join(cache, f"{a.at}__" + re.sub(r"[^A-Za-z0-9._-]+", "__", path))
-        if os.path.exists(cpath):
+        # Key by commit so a re-review of a newer head never reads stale content; the worktree changes
+        # under us, so it is never cached.
+        cpath = os.path.join(cache, f"{a.at}-{sha[:12]}__" + re.sub(r"[^A-Za-z0-9._-]+", "__", path))
+        use_cache = sha != "WORKTREE"
+        if use_cache and os.path.exists(cpath):
             with open(cpath, encoding="utf-8") as fh:
                 text = fh.read()
         else:
@@ -142,8 +146,9 @@ def cmd_snippet(a) -> int:
             if text is None:
                 print(f"## {path}\n  [not found at {a.at} {sha[:12]}]")
                 continue
-            with open(cpath, "w", encoding="utf-8") as fh:
-                fh.write(text)
+            if use_cache:
+                with open(cpath, "w", encoding="utf-8") as fh:
+                    fh.write(text)
         lines = text.splitlines()
         start = max(1, int(lo)) if lo else 1
         end = min(len(lines), int(hi)) if hi else min(len(lines), 300)

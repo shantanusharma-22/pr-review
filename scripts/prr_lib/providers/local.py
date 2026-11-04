@@ -1,6 +1,7 @@
 """Local git mode: review <base>...<head> in the current checkout. Works with any git host."""
 from __future__ import annotations
 
+import os
 import subprocess
 from typing import List, Optional
 
@@ -74,9 +75,16 @@ class Local(Provider):
 
     def read_file(self, path: str, sha: str) -> Optional[str]:
         if sha == "WORKTREE":
-            root = git("rev-parse", "--show-toplevel", cwd=self.cwd).strip()
+            root = os.path.realpath(git("rev-parse", "--show-toplevel", cwd=self.cwd).strip())
+            full = os.path.realpath(os.path.join(root, path))
             try:
-                with open(f"{root}/{path}", encoding="utf-8", errors="replace") as fh:
+                inside = os.path.commonpath([root, full]) == root
+            except ValueError:  # different drive on Windows
+                inside = False
+            if not inside:  # ../ or a symlink pointing outside the checkout
+                return None
+            try:
+                with open(full, encoding="utf-8", errors="replace") as fh:
                     return fh.read()
             except OSError:
                 return None

@@ -27,6 +27,17 @@ def _cli(cmd) -> Optional[str]:
     return token if out.returncode == 0 and token and " " not in token else None
 
 
+def trusted(host: str) -> bool:
+    """True if generic (host-agnostic) tokens may be sent to `host`.
+
+    A PR URL is attacker-influenced text, so a token from a generic variable such as GH_TOKEN is only sent
+    to a host the user named in PR_REVIEW_TRUSTED_HOSTS (comma-separated; `host` or `host:port`).
+    """
+    allowed = {h.strip().lower() for h in os.environ.get("PR_REVIEW_TRUSTED_HOSTS", "").split(",") if h.strip()}
+    host = host.lower()
+    return host in allowed or host.split(":")[0] in allowed
+
+
 def _b64(s: str) -> str:
     return base64.b64encode(s.encode("utf-8")).decode("ascii")
 
@@ -35,17 +46,24 @@ def github(host: str) -> Dict[str, str]:
     if host == "github.com":
         tok = _env("GH_TOKEN", "GITHUB_TOKEN")
     else:
-        tok = _env("GH_ENTERPRISE_TOKEN", "GITHUB_ENTERPRISE_TOKEN", "GH_TOKEN", "GITHUB_TOKEN")
+        tok = _env("GH_ENTERPRISE_TOKEN", "GITHUB_ENTERPRISE_TOKEN")
+        if not tok and trusted(host):
+            tok = _env("GH_TOKEN", "GITHUB_TOKEN")
     tok = tok or _cli(["gh", "auth", "token", "--hostname", host])
     return {"Authorization": f"Bearer {tok}"} if tok else {}
 
 
 def gitlab(host: str) -> Dict[str, str]:
-    tok = _env("GITLAB_TOKEN", "GL_TOKEN") or _cli(["glab", "config", "get", "token", "--host", host])
+    tok = None
+    if host == "gitlab.com" or trusted(host):
+        tok = _env("GITLAB_TOKEN", "GL_TOKEN")
+    tok = tok or _cli(["glab", "config", "get", "token", "--host", host])
     if tok:
         return {"PRIVATE-TOKEN": tok}
     job = _env("CI_JOB_TOKEN")
-    return {"JOB-TOKEN": job} if job else {}
+    if job and host == (_env("CI_SERVER_HOST") or "gitlab.com"):
+        return {"JOB-TOKEN": job}
+    return {}
 
 
 def bitbucket(host: str = "bitbucket.org") -> Dict[str, str]:
@@ -68,9 +86,17 @@ def azure(host: str = "dev.azure.com") -> Dict[str, str]:
 
 
 def gitea(host: str) -> Dict[str, str]:
-    tok = _env("GITEA_TOKEN", "FORGEJO_TOKEN", "CODEBERG_TOKEN")
+    if host == "codeberg.org":
+        tok = _env("CODEBERG_TOKEN", "FORGEJO_TOKEN", "GITEA_TOKEN")
+    elif trusted(host):
+        tok = _env("GITEA_TOKEN", "FORGEJO_TOKEN")
+    else:
+        tok = None
     return {"Authorization": f"token {tok}"} if tok else {}
 
+
+TRUST_HINT = (" For a self-hosted host, also set PR_REVIEW_TRUSTED_HOSTS=<host> so generic tokens are sent "
+              "there (they are never sent to unlisted hosts).")
 
 HINTS = {
     "github": "Set GH_TOKEN (or GITHUB_TOKEN), or run `gh auth login`. Needs read access to the repo; "
