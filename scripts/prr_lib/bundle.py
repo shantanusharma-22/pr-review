@@ -126,7 +126,7 @@ def within_budget(bundle: dict, max_files: int, max_lines: int) -> bool:
 
 def neutralize(text: str) -> str:
     """Break up fence-like sequences so untrusted text cannot close or imitate a fence."""
-    return (text or "").replace("<<<", "<<​<").replace(">>>", ">>​>")
+    return (text or "").replace("<<<", "<<\u200b<").replace(">>>", ">>\u200b>")
 
 
 def _untrusted(label: str, text: str, limit: int, nonce: str = "") -> str:
